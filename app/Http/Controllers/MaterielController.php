@@ -22,9 +22,22 @@ private function getEquipementsParStatut($Statut)
 {
     $directionId = Auth::user()->direction_id;
 
-    return Equipement::where('direction_id', $directionId)
+    return Equipement::with('sortieActive')
+                     ->where('direction_id', $directionId)
                      ->where('statut', $Statut)
                      ->get();
+}
+
+private function getEquipementsActifs(Request $request = null)
+{
+    $directionId = Auth::user()->direction_id;
+    $query = Equipement::with('sortieActive')->where('direction_id', $directionId);
+
+    // Exclure les enlevés par défaut
+    if (!($request && $request->boolean('afficher_enleves'))) {
+        $query->where('statut', '!=', 'enlèvement');
+    }
+    return $query;
 }
 
 private function getMaterielsGeneraux()
@@ -43,17 +56,23 @@ private function getMaterielsGeneraux()
 public function list_stock()
 {
     $materiels = $this->getMaterielsGeneraux();
-    $materiels['materielsEnStock'] = $this->getEquipementsParStatut('en stock');
-    $materiels['materielsHorsService'] = $this->getEquipementsParStatut('hors service');
-    $materiels['materielsEnMaintenance'] = $this->getEquipementsParStatut('en maintenance');
-    $materiels['materielsEnService'] = $this->getEquipementsParStatut('en service');/*->filter(function ($equipement) {
-        return $equipement->assignments->isNotEmpty();
-    });*/
-    $materiels['nombreDeployes'] = $materiels['materielsEnService']->count();
 
+    $materiels['materielsEnStock'] = $this->getEquipementsParStatut('en stock')
+        ->sortByDesc('created_at');
+    $materiels['materielsHorsService'] = $this->getEquipementsParStatut('hors service')
+        ->sortByDesc('created_at');
+    $materiels['materielsEnMaintenance'] = $this->getEquipementsParStatut('en maintenance')
+        ->sortByDesc('created_at');
+    $materiels['materielsEnService'] = $this->getEquipementsParStatut('en service')
+        ->sortByDesc('created_at');
+
+    $materiels['nombreDeployes'] = $materiels['materielsEnService']->count();
     $materiels['sources'] = SourceAcquisition::all();
-$postes = Poste::with('equipements')->where('direction_id', Auth::user()->direction_id)->get();
-    
+
+    $postes = Poste::with('equipements')
+        ->where('direction_id', Auth::user()->direction_id)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
     return view('Patrimoine.equipements.stock_materiel', $materiels, compact('postes'));
 }
@@ -61,12 +80,14 @@ $postes = Poste::with('equipements')->where('direction_id', Auth::user()->direct
 public function materielsEnService()
 {
     $materiels = $this->getMaterielsGeneraux();
-    $materiels['materielsEnStock'] = $this->getEquipementsParStatut('en stock');
-    $materiels['materielsHorsService'] = $this->getEquipementsParStatut('hors service');
-    $materiels['materielsEnMaintenance'] = $this->getEquipementsParStatut('en maintenance');
-    $materiels['materielsEnService'] = $this->getEquipementsParStatut('en service');/*->filter(function ($equipement) {
-        return $equipement->assignments->isNotEmpty();
-    });*/
+    $materiels['materielsEnStock'] = $this->getEquipementsParStatut('en stock')
+        ->sortByDesc('created_at');
+    $materiels['materielsHorsService'] = $this->getEquipementsParStatut('hors service')
+        ->sortByDesc('created_at');
+    $materiels['materielsEnMaintenance'] = $this->getEquipementsParStatut('en maintenance')
+        ->sortByDesc('created_at');
+    $materiels['materielsEnService'] = $this->getEquipementsParStatut('en service')
+        ->sortByDesc('created_at');
     $materiels['nombreDeployes'] = $materiels['materielsEnService']->count();
     $postes = Poste::with('equipements')->where('direction_id', Auth::user()->direction_id)->get();
 
@@ -76,12 +97,14 @@ public function materielsEnService()
 public function materielsEnMaintenance()
 {
     $materiels = $this->getMaterielsGeneraux();
-    $materiels['materielsEnStock'] = $this->getEquipementsParStatut('en stock');
-    $materiels['materielsHorsService'] = $this->getEquipementsParStatut('hors service');
-    $materiels['materielsEnMaintenance'] = $this->getEquipementsParStatut('en maintenance');
-    $materiels['materielsEnService'] = $this->getEquipementsParStatut('en service');/*->filter(function ($equipement) {
-        return $equipement->assignments->isNotEmpty();
-    });*/
+     $materiels['materielsEnStock'] = $this->getEquipementsParStatut('en stock')
+        ->sortByDesc('created_at');
+    $materiels['materielsHorsService'] = $this->getEquipementsParStatut('hors service')
+        ->sortByDesc('created_at');
+    $materiels['materielsEnMaintenance'] = $this->getEquipementsParStatut('en maintenance')
+        ->sortByDesc('created_at');
+    $materiels['materielsEnService'] = $this->getEquipementsParStatut('en service')
+        ->sortByDesc('created_at');
     $materiels['nombreDeployes'] = $materiels['materielsEnService']->count();
     $postes = Poste::with('equipements')->where('direction_id', Auth::user()->direction_id)->get();
 

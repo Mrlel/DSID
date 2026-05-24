@@ -65,8 +65,8 @@
 <!-- Header -->
 <div class="d-flex justify-content-between align-items-center my-4">
     <div>
-        <h1 class="h3 fw-bold mb-1">Gestion du Patrimoine Informatique</h1>
-        <p class="text-muted mb-0">Tableau de bord • République de Côte d'Ivoire</p>
+        <h1 class="h3 fw-bold mb-1">Tableau de bord — Patrimoine</h1>
+        <p class="text-muted mb-0">Vue d'ensemble du patrimoine administratif  • Système de Gestion du Patrimoine Administratif</p>
     </div>
     <!--<a href="{{ route('admin.dashboard.export-pdf') }}" class="btn btn-success">
         <i class="fas fa-file-pdf me-2"></i>Exporter PDF

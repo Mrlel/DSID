@@ -1,13 +1,16 @@
 @extends('layouts.main-board')
 
 @section('content')
-<header class="my-5">
+<header class="my-5 d-flex justify-content-between">
+<div>
   <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center">
     Inventaire des Equipements Informatiques ({{ $equipements->count() }})
   </h1>
   <p class="text-muted mb-0">
     Liste des Equipements • disponibles dans le parc
   </p>
+</div>
+ <a href="/stock_materiel" class="btn btn-outline-secondary">Retour</a>
 </header>
     <!-- Formulaire de filtrage -->
     <div class="card border-light shadow-sm bg-light  mb-4">
@@ -58,8 +61,8 @@
                             <label for="statut">Statut</label>
                             <select name="statut" id="statut" class="form-control">
                                 <option value="">Tous les statuts</option>
-                                @foreach(['en stock', 'en service', 'en maintenance'] as $statut)
-                                    <option value="{{ $statut }}" {{ request('statut') == $statut ? 'selected' : '' }}>{{ $statut }}</option>
+                                @foreach(['en stock', 'en service', 'en maintenance', 'enlèvement'] as $statut)
+                                    <option value="{{ $statut }}" {{ request('statut') == $statut ? 'selected' : '' }}>{{ ucfirst($statut) }}</option>
                                 @endforeach
                             </select>
                         </div>

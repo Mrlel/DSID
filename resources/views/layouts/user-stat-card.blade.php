@@ -1,3 +1,71 @@
+{{-- En-tête --}}
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between py-4 gap-3">
+    <div>
+        <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+            <i class="bi bi-person text-success"></i> Gestion du personnel
+        </h1>
+        <p class="text-muted mb-0">Gestion complète de tout les agents de la direction
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-success d-flex align-items-center gap-2"
+         type="button" 
+          data-bs-toggle="modal" 
+          data-bs-target="#exampleModal">
+            <i class="bi bi-plus-circle fs-5"></i> Ajouter
+        </button>
+        <a href="{{ route('mobiliers.inventaire') }}" class="btn btn-outline-primary d-flex align-items-center gap-2"
+        type="button" 
+          data-bs-toggle="modal" 
+          data-bs-target="#fonctionModal">
+            <i class="bi bi-briefcase fs-5"></i> Ajouter une fonction
+        </a>
+        <div class="dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2 px-3 py-2" 
+            type="button" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false">
+      <i class="bi bi-download me-2"></i>
+      Exporter
+    </button>
+    
+    <ul class="dropdown-menu dropdown-menu-end p-2 border-0 shadow-lg rounded-3">
+      
+      <li>
+        <button type="button" 
+                class="dropdown-item d-flex align-items-center gap-2 rounded-2" 
+                data-bs-toggle="modal" 
+                data-bs-target="#importModal">
+          <i class="bi bi-file-earmark-arrow-up fs-5 text-success"></i>
+          <span>Importer (depuis Excel)</span>
+        </button>
+      </li>
+      
+      <li><hr class="dropdown-divider"></li>
+
+      <li>
+        <form action="{{ route('ExportUsers') }}" method="post" class="m-0">
+          @csrf  
+          <button type="submit" class="dropdown-item d-flex align-items-center gap-2 rounded-2">
+            <i class="bi bi-file-earmark-pdf-fill fs-5 text-danger"></i>
+            <span>Exporter en PDF</span>
+          </button>
+        </form>
+      </li>
+      
+      <li>
+        <form action="{{ route('ExportUsersExcel') }}" method="post" class="m-0">
+          @csrf
+          <button type="submit" class="dropdown-item d-flex align-items-center gap-2 rounded-2">
+              <i class="bi bi-file-earmark-excel-fill fs-5 text-success"></i>
+              <span>Exporter en Excel</span>
+          </button>
+        </form>
+      </li>
+    </ul>
+  </div>
+    </div>
+</div>
+
 <div class="row g-4 mb-5">
   <!-- Total utilisateurs -->
   <div class="col-12 col-sm-6 col-lg-4">
@@ -89,83 +157,12 @@
     </a>
   </div>
 </div>
-
-<div class="invoices-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
-  
-  <!-- Barre de recherche -->
+ <!-- Barre de recherche -->
   <div class="search-bar w-50 w-md-50 position-relative">
     <input type="text" id="searchInput" class="form-control ps-5" placeholder="Rechercher un utilisateur...">
     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
   </div>
-
-  <div class="user-actions d-flex flex-wrap align-items-center justify-content-start gap-3 my-3">
-
-  <button class="btn text-white d-flex align-items-center gap-2 px-3 py-2 fw-semibold" 
-          style="background-color: #f3902e;" 
-          type="button" 
-          data-bs-toggle="modal" 
-          data-bs-target="#exampleModal">
-    <i class="bi bi-person-plus-fill fs-5"></i>
-    <span>Ajouter un utilisateur</span>
-  </button>
-
-
-    <button class="btn text-white bg-success d-flex align-items-center gap-2 px-3 py-2 fw-semibold" 
-          style="" 
-          type="button" 
-          data-bs-toggle="modal" 
-          data-bs-target="#fonctionModal">
-     <i class="bi bi-briefcase fs-5"></i>
-    <span>Ajouter une fonction</span>
-  </button>
-
-
-  <div class="dropdown">
-    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2 px-3 py-2" 
-            type="button" 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false">
-      <i class="bi bi-gear-fill"></i>
-      Options
-    </button>
-    
-    <ul class="dropdown-menu dropdown-menu-end p-2 border-0 shadow-lg rounded-3">
-      
-      <li>
-        <button type="button" 
-                class="dropdown-item d-flex align-items-center gap-2 rounded-2" 
-                data-bs-toggle="modal" 
-                data-bs-target="#importModal">
-          <i class="bi bi-file-earmark-arrow-up fs-5 text-success"></i>
-          <span>Importer (depuis Excel)</span>
-        </button>
-      </li>
-      
-      <li><hr class="dropdown-divider"></li>
-
-      <li>
-        <form action="{{ route('ExportUsers') }}" method="post" class="m-0">
-          @csrf  
-          <button type="submit" class="dropdown-item d-flex align-items-center gap-2 rounded-2">
-            <i class="bi bi-file-earmark-pdf-fill fs-5 text-danger"></i>
-            <span>Exporter en PDF</span>
-          </button>
-        </form>
-      </li>
-      
-      <li>
-        <form action="{{ route('ExportUsersExcel') }}" method="post" class="m-0">
-          @csrf
-          <button type="submit" class="dropdown-item d-flex align-items-center gap-2 rounded-2">
-              <i class="bi bi-file-earmark-excel-fill fs-5 text-success"></i>
-              <span>Exporter en Excel</span>
-          </button>
-        </form>
-      </li>
-    </ul>
-  </div>
-</div>
-</div>
+  
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -252,7 +249,11 @@
                                         <option value="sous_directeur">Sous directeur</option>
                                         <option value="gestionnaire_parc">Gestionnaire de parc</option>
                                         <option value="technicien">Chef de service maintenance</option>
-                                        <option value="admin">Directeur</option>
+                                        <option value="directeur">Directeur</option>
+                                        <option value="Admin">Administrateur</option>
+                                        <option value="point_focal">Point focal</option>
+                                        <option value="service_gestionnaire">Service gestionnaire</option>
+                                        <option value="ministre">Ministre</option>
                                     </select>
                                 </div>
    

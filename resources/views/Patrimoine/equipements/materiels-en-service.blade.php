@@ -2,31 +2,17 @@
 @section('title', 'Gestion des materiels en service')
 @section('content')
 
-<div class="en-tete d-flex flex-column flex-md-row align-items-center justify-content-between py-4">
-<header class="">
-  <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center">
-    Gestion des Equipements Informatiques
-  </h1>
-  <p class="text-muted mb-0">
-    Liste des Equipements • En Service
-  </p>
-</header>
-
-  <div class="d-flex align-items-center gap-2">
-    <a href="/list_poste" class="btn btn-success d-flex align-items-center gap-2 px-3 py-2">
-      <i class="bi bi-pc-display fs-5"></i>
-      <span>POSTES/DESKTOP <span class="fs-5">({{$postes->count()}})</span></span>
-    </a>
-    <a href="/adminsEquipement/{{ Auth::user()->id }}" class="btn btn-dark d-flex align-items-center gap-2 px-3 py-2 text-white">
-     <i class="bi bi-pc-display-horizontal fs-5"></i>
-      <span>MES EQUIPEMENTS</span>
-    </a>
-  </div>
-</div>
-
 @include('layouts.materiel-stat-card')
 
- @if($materielsEnService->count() > 0)
+<style>
+      /* Fin de vie inline compact */
+    .fin-vie-badge { display:inline-flex; align-items:center; gap:4px; font-size:0.78rem; padding:2px 7px; border-radius:20px; font-weight:600; white-space:nowrap; }
+    .fin-vie-ok      { background:#d1fae5; color:#065f46; }
+    .fin-vie-soon    { background:#fef3c7; color:#92400e; }
+    .fin-vie-expired { background:#fee2e2; color:#991b1b; }
+</style>
+
+@if($materielsEnService->count() > 0)
 <div class="table-responsive shadow-sm rounded">
   <table class="table table-striped table-hover align-middle mb-0">
     <thead class="table-dark">
@@ -36,30 +22,56 @@
         <th>Marque</th>
         <th>N° Série</th>
         <th>État</th>
-        <th>Date Acquisition</th>
+        <th>Fin de vie</th>
         <th class="text-center">Action</th>
       </tr>
     </thead>
     <tbody>
       @foreach ($materielsEnService as $materiel)
+          @php
+          $joursRestants = $materiel->date_fin_vie ? now()->diffInDays($materiel->date_fin_vie, false) : null;
+          $rowClass = '';
+          if ($joursRestants !== null) {
+              if ($joursRestants < 0)       $rowClass = 'table-danger';
+              elseif ($joursRestants <= 30) $rowClass = 'table-warning';
+          }
+          $hasSortie = $materiel->sortieActive !== null;
+      @endphp
       <tr>
         <td>{{ $materiel->des_equipement }}</td>
         <td>{{ $materiel->categorie }}</td>
         <td>{{ $materiel->marque }}</td>
         <td>{{ $materiel->numero_serie }}</td>
         <td>{{ $materiel->etat }}</td>
-        <td>{{ $materiel->date_acquis ?? 'Non spécifié' }}</td>
+        <td>
+            @if($joursRestants !== null)
+                @if($joursRestants < 0)
+                    <span class="fin-vie-badge fin-vie-expired">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Dépassée ({{ abs($joursRestants) }}j)
+                    </span>
+                @elseif($joursRestants <= 30)
+                    <span class="fin-vie-badge fin-vie-soon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        {{ $joursRestants }}j restants
+                    </span>
+                @else
+                    <span class="fin-vie-badge fin-vie-ok">
+                        <i class="bi bi-check-circle-fill"></i>
+                        {{ $materiel->date_fin_vie->format('d/m/Y') }}
+                    </span>
+                @endif
+            @else
+                <span class="text-muted small">—</span>
+            @endif
+        </td>
         <td class="text-center">
           <div class="dropdown">
-            <button class="btn btn-sm btn-light dropdown-toggle" 
-                    type="button" 
-                    id="dropdownMenuButtonMateriel{{ $materiel->id }}" 
-                    data-bs-toggle="dropdown" 
-                    aria-expanded="false">
+            <button class="btn btn-sm btn-light dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-three-dots-vertical"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end" 
-                aria-labelledby="dropdownMenuButtonMateriel{{ $materiel->id }}">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li>
                 <a class="dropdown-item" href="/update_equipemnt/{{ $materiel->id }}">
                   <i class="bi bi-pencil me-2 text-primary"></i> Modifier
@@ -72,8 +84,8 @@
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
-                <a class="dropdown-item text-danger" 
-                   href="/delete_ordinateur/{{ $materiel->id }}" 
+                <a class="dropdown-item text-danger"
+                   href="/delete_ordinateur/{{ $materiel->id }}"
                    onclick="return confirm('Voulez-vous vraiment supprimer ce matériel ?')">
                   <i class="bi bi-trash me-2"></i> Supprimer
                 </a>
@@ -93,85 +105,4 @@
 </div>
 @endif
 
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-                 document.querySelectorAll(".moreBtn").forEach(function(btn) {
-    btn.addEventListener("click", function(event) {
-        var content = this.nextElementSibling;
-        document.querySelectorAll(".moreBtn-content").forEach(function(c) {
-            if (c !== content) {
-                c.classList.remove('show');
-                setTimeout(function() { c.style.display = "none"; }, 300);
-            }
-        });
-        if (content.classList.contains('show')) {
-            content.classList.remove('show');
-            setTimeout(function() { content.style.display = "none"; }, 300);
-        } else {
-            content.style.display = "block";
-            setTimeout(function() { content.classList.add('show'); }, 5); // slight delay to ensure display:block is applied
-        }
-        event.stopPropagation();
-    });
-});
-
-    const toggleSidebar = document.getElementById('toggle-sidebar');
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('content');
-
-    toggleSidebar.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed');  // Ajoute ou supprime la classe 'collapsed'
-      content.classList.toggle('collapsed');  // Ajoute ou supprime le décalage du contenu
-    });
-  </script>
-       </div>
-       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content mt-5">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Attribuer un Matériel</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <form class="ui form" method="POST" action="{{ route('assign.equipement') }}">
-    @csrf
-
-    <!-- Sélection de l'utilisateur -->
-    <div class="form-group text-center">
-        <label style="margin-bottom: 10px;">Utilisateur</label>
-        <br>
-        <select class="fluid ui selection dropdown" name="user_id" id="user_id" class="form-control custom-select" required>
-            <option value="" disabled selected>-- Sélectionnez un utilisateur --</option>
-            @foreach($users as $user)
-                <option value="{{ $user->id }}">
-                    {{ $user->matricule }} - {{ $user->nom }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-<br>
-    <!-- Sélection de l'équipement -->
-    <div class="form-group text-center">
-        <label style="margin-bottom: 10px;">Équipement</label>
-        <br>
-        <select class="fluid ui selection dropdown" name="equipement_id" id="equipement_id" class="form-control custom-select" required>
-            <option value="" disabled selected>-- Sélectionnez un équipement --</option>
-            @foreach($materielsEnStock as $materiel)
-                <option value="{{ $materiel->id }}">
-                    {{ $materiel->des_equipement }} {{ $materiel->modele}} -  {{ $materiel->numero_serie }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <!-- Bouton de soumission -->
-    <button type="submit" class="fluid ui medium primary button " style="margin-top: 20px;text-align: center;">
-         Attribuer <span uk-icon="check"></span>
-    </button>
-</form>
-
-                </div>
-            </div>
-        </div>
 @endsection

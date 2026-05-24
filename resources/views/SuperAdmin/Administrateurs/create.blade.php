@@ -187,13 +187,17 @@
                         <!-- Cinquième rangée -->
                         <div class="col-md-6 mb-3">
                             <label for="role" class="form-label">Rôle</label>
-                            <select name="role" id="role" class="form-select" required>
-                                <option value="user">Utilisateur</option>
-                                <option value="chef_de_service">Chef de service</option>
-                                <option value="admin">Directeur</option>
-                                <option value="sous_directeur">Sous directeur</option>
-                                <option value="gestionnaire_parc">Gestionnaire de parc</option>
-                                <option value="technicien">Technicien</option>
+                            <select name="role" id="role" class="form-select" required>     
+                                        <option value="user">Agent</option>
+                                        <option value="chef_de_service">Chef de service</option>
+                                        <option value="sous_directeur">Sous directeur</option>
+                                        <option value="gestionnaire_parc">Gestionnaire de parc</option>
+                                        <option value="technicien">Chef de service maintenance</option>
+                                        <option value="directeur">Directeur</option>
+                                        <option value="Admin">Administrateur</option>
+                                        <option value="point_focal">Point focal</option>
+                                        <option value="service_gestionnaire">Service gestionnaire</option>
+                                        <option value="ministre">Ministre</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">

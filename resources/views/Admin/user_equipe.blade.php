@@ -3,14 +3,6 @@
 @section('title', 'Gestion des utilisateurs')
 
 @section('content')
-<header class="my-4">
-  <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center">
-    Gestion du personnel informaticiens
-  </h1>
-  <p class="text-muted mb-0">
-    Liste des agents • equipé
-  </p>
-</header>
 @include('layouts.user-stat-card')
 
                 @if($users_equipes->count() > 0)
@@ -43,21 +35,13 @@
                         <td>{{$user_equipe->emploie}}</td>
                         <td>{{$user_equipe->fonction_id ? $user_equipe->fonction->fonction : ''}}</td>
                         <td>{{$user_equipe->grade}}</td>
-                        <td>
-                            @if($user_equipe->role == 'admin')
-                            <span class="badge bg-dark">Directeur</span>
-                        @elseif($user_equipe->role == 'chef_de_service')
-                            <span class="badge bg-info">Chef de service</span>
-                        @elseif ($user_equipe->role == 'sous_directeur')
-                            <span class="badge bg-success">Sous Directeur</span>
-                        @elseif ($user_equipe->role == 'gestionnaire_parc')
-                            <span class="badge bg-warning">Gestionnaire du Parc</span>
-                        @elseif ($user_equipe->role == 'technicien')
-                            <span class="badge bg-danger">Chef de service maintenance</span>
+                     <td>
+                        @if($user_equipe->role == 'user')
+                            <span class="">Agent</span>
                         @else
-                            <span class="badge bg-secondary">Agent</span>
+                            <span class="">{{$user_equipe->role}}</span>
                          @endif
-                        </td>
+                    </td>
                    <td class="text-center">
                         <div class="dropdown">
                             <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton{{ $user_equipe->id }}" data-bs-toggle="dropdown" aria-expanded="false">
@@ -68,26 +52,26 @@
                                 
                                 <li>
                                     <a class="dropdown-item" href="/update_user/{{$user_equipe->id}}">
-                                        <i class="bi bi-pencil text-primary me-2"></i> Modifier
+                                        <i class="bi bi-pencil text-primary me-2 fs-4"></i> Modifier
                                     </a>
                                 </li>
 
                                 <li>
                                     <a class="dropdown-item" href="/users/{{$user_equipe->id}}/all-equipements">
-                                        <i class="bi bi-boxes me-2"></i> Équipements assignés
+                                        <i class="bi bi-at me-2 fs-4"></i> Équipements assignés
                                     </a>
                                 </li>
 
                                 <li>
                                     <a class="dropdown-item" href="{{ route('directions.reset-password-admin', $user_equipe->id) }}" onclick="return confirm('Voulez-vous vraiment réinitialiser le mot de passe de ce utilisateur ?')">
-                                        <i class="bi bi-key me-2"></i> Réinitialiser le mot de passe
+                                        <i class="bi bi-key me-2 fs-4"></i> Réinitialiser le mot de passe
                                     </a>
                                 </li>
 
                                 <li><hr class="dropdown-divider"></li>
 
                                 <li>
-                                    <a href="/user_Delete/{{$user_equipe->id}}" onclick="return confirm('Voulez-vous vraiment supprimer ce utilisateur ?')" class="dropdown-item text-danger" style="color: #e74c3c;"><i class="bi bi-trash"></i> Supprimer</a>
+                                    <a href="/user_Delete/{{$user_equipe->id}}" onclick="return confirm('Voulez-vous vraiment supprimer ce utilisateur ?')" class="dropdown-item text-danger " style="color: #e74c3c;"><i class="bi bi-trash"></i> Supprimer</a>
                                 </li>
 
                             </ul>

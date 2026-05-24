@@ -21,7 +21,7 @@ class AdminSeeder extends Seeder
             'emploie' => 'Administrateur système',
             'fonction_id' => 1,
             'grade' => 'A4',
-            'role' => 'superadmin',
+            'role' => 'admin',
             'password' => Hash::make('12345678'),
             'direction_id' => Direction::where('code_direction', 'DSID')->first()->id,
             'created_at' => now(),   

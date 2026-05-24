@@ -134,32 +134,45 @@
                                 Matériel Informatique
                             </a>
                         </li>
+
                         <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('patrimoine-divers.index') }}">
-                                <i class="bi bi-box-seam fs-6"></i>
-                                Fournitures & Consommables
+                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('vehicules.index') }}">
+                                <i class="bi bi-car-front fs-6"></i>
+                                Gestion du parc auto 
                             </a>
                         </li>
+                         <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('mobiliers.index') }}">
+                               <i class="bi bi-lamp fs-6"></i>
+                                Mobilier & materiel de bureau
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('patrimoine-divers.index') }}">
+                                <i class="bi bi-journal-album fs-6"></i>
+                                Fourniture & consomable
+                            </a>
+                        </li>
+                
                         <li>
                             <a class="dropdown-item d-flex align-items-center gap-2" href="/list_logiciel">
                                 <i class="bi bi-box-seam fs-6"></i>
                                 Logiciels
                             </a>
                         </li>
-                        
-                         <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2" href="/adminsEquipement/{{ Auth::user()->id }}">
-                                <i class="bi bi-pc-display-horizontal fs-6"></i>
-                                Mes Équipements
+                          <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('fin-vie.index') }}">
+                                <i class="bi bi-hourglass-split fs-5 text-danger"></i>
+                                Fin de durée de vie
                             </a>
                         </li>
                     </ul>
                 </li>
 
                 <li class="nav-item">
-                    <a href="/inventaire" class="nav-link d-flex align-items-center gap-2">
-                        <i class="bi bi-journal-text fs-5"></i>
-                        <span>Inventaire du parc</span>
+                    <a href="/list_poste" class="nav-link d-flex align-items-center gap-2">
+                      <i class="bi bi-pc-display fs-5"></i>
+                        <span>Poste & Desktop</span>
                     </a>
                 </li>
 
@@ -189,28 +202,22 @@
                         </li>
                     </ul>
                 </li>
-               <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="demandesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-clock-history fs-5"></i>
-                        <span>Activités</span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="demandesDropdown">
+                   @if(auth()->user()->role == 'admin')
                         <li>
-                            <a href="/list_historique_attribution" class="dropdown-item d-flex align-items-center gap-2">
-                                <i class="bi bi-clock-history fs-5"></i>
-                                <span>Historique d'affectation</span>
-                            </a>
-                        </li>
-                        @if(auth()->user()->role == 'admin')
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center gap-2" href="/journal">
+                            <a class="nav-link d-flex align-items-center gap-2" href="/journal">
                                 <i class="bi bi-ui-checks fs-5"></i>
                                 Journal d'activités
                             </a>
                         </li>
                         @endif
-                    </ul>
+
+                <li class="nav-item">
+                    <a href="{{ route('patrimoine-enleves.index') }}" class="nav-link d-flex align-items-center gap-2">
+                        <i class="bi bi-archive fs-5"></i>
+                        <span>Enlevés</span>
+                    </a>
                 </li>
+
             </ul>
         </div>
     </nav>

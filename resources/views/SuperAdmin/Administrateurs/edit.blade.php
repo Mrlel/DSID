@@ -199,12 +199,16 @@
                         <div class="col-md-6 mb-3">
                         <label for="role">Rôle</label>
                         <select name="role" class="form-select" id="role">
-                            <option value="admin" {{ old('role', $admin->role) == 'admin' ? 'selected' : '' }}>Directeur</option>
+                            <option value="admin" {{ old('role', $admin->role) == 'admin' ? 'selected' : '' }}>Administrateur</option>
+                            <option value="directeur" {{ old('role', $admin->role) == 'directeur' ? 'selected' : '' }}>Directeur</option>
+                            <option value="point_focal" {{ old('role', $admin->role) == 'point_focal' ? 'selected' : '' }}>Point focal</option>
+                            <option value="service_gestionnaire" {{ old('role', $admin->role) == 'service_gestionnaire' ? 'selected' : '' }}>Service gestionnaire</option>
+                            <option value="ministre" {{ old('role', $admin->role) == 'ministre' ? 'selected' : '' }}>Ministre</option>
                             <option value="chef_de_service" {{ old('role', $admin->role) == 'chef_de_service' ? 'selected' : '' }}>Chef de service</option>
-                            <option value="user" {{ old('role', $admin->role) == 'user' ? 'selected' : '' }}>Utilisateur</option>
+                            <option value="user" {{ old('role', $admin->role) == 'user' ? 'selected' : '' }}>Agent</option>
                             <option value="sous_directeur" {{ old('role', $admin->role) == 'sous_directeur' ? 'selected' : '' }}>Sous directeur</option>
                             <option value="gestionnaire_parc" {{ old('role', $admin->role) == 'gestionnaire_parc' ? 'selected' : '' }}>Gestionnaire de parc</option>
-                            <option value="technicien" {{ old('role', $admin->role) == 'technicien' ? 'selected' : '' }}> Technicien</option>
+                            <option value="technicien" {{ old('role', $admin->role) == 'technicien' ? 'selected' : '' }}>Chef de service Maintenance</option>
                         </select>
                         </div>
                     </div>

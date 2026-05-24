@@ -1,4 +1,34 @@
 
+
+
+<div class="en-tete d-flex flex-column flex-md-row align-items-center justify-content-between py-4">
+
+<header class="">
+  <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center">
+    Gestion des Equipements Informatiques
+  </h1>
+  <p class="text-muted mb-0">
+    Liste des Equipements • 
+  </p>
+</header>
+
+  <div class="d-flex gap-2 flex-wrap">
+        <a href="/equipements/create" class="btn btn-success d-flex align-items-center gap-2">
+            <i class="bi bi-plus-circle fs-5"></i> Ajouter un equipement
+        </a>
+        <a href="/inventaire" class="btn btn-outline-primary d-flex align-items-center gap-2">
+            <i class="bi bi-journal-text fs-5"></i> Inventaire
+        </a>
+        <a href="/list_historique_attribution" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-clock-history fs-5"></i> Historique
+        </a>
+         <a href="/adminsEquipement/{{ Auth::user()->id }}" class="btn btn-outline-dark d-flex align-items-center gap-2">
+            <i class="bi bi-pc-display-horizontal fs-5"></i>
+            <span>MES EQUIPEMENTS</span>
+          </a>
+    </div>
+</div>
+
 <!-- Stat Cards -->
  <div class="row g-4 mb-4">
   <!-- Equipements en stock -->
@@ -107,12 +137,7 @@
     </div>
 
     <!-- Bouton Liste Postes -->
-    <div class="col-12 col-md-auto">
-     <a href="/equipements/create" 
-         class="dropdown-item d-flex align-items-center py-2 px-3 rounded" style="background-color: #f3902e; color: white;">
-        <i class="fas fa-plus-circle me-3"></i> Ajouter un Equipement
-    </a>
-    </div>
+ 
 
     <!-- Dropdown Actions -->
     <div class="col-12 col-md-auto">

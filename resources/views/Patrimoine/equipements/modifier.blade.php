@@ -3,11 +3,54 @@
 @section('content')
 
 <style>
-    .form-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
+      /* Variables - Palette sobre et professionnelle */
+    :root {
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --blue-500: #3b82f6;
+        --blue-600: #2563eb;
+        --red-500: #ef4444;
+        --red-600: #dc2626;
+        --green-500: #10b981;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
+
+    /* Reset et styles de base */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .form-container {
+        background: var(--gray-50);
+        min-height: calc(100vh - 200px);
+        padding: 2rem;
+    }
+
+    .form-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    /* Carte principale - épurée */
+    .form-card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
     
     .form-title {
         text-align: center;
@@ -120,6 +163,15 @@
 
 <div class="form-container">
     <div class="form-wrapper">
+
+    <div class="form-header">
+                <h2>
+                    <i class="fas fa-plus-circle"></i>
+                    Modification équipement
+                </h2>
+                <p>Remplissez les informations ci-dessous pour modifier un équipement</p>
+            </div>
+
         <form class="ui fluid form" action="{{ route('equipement.update') }}" method="POST">
             @csrf
             <input type="hidden" name="id" value="{{ $equipement->id }}">
@@ -243,6 +295,15 @@
                     <input type="date" name="date_acquis" id="date_acquis" 
                         value="{{ old('date_acquis', $equipement->date_acquis) }}" required>
                     @error('date_acquis')
+                        <div class="ui pointing red basic label">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="field @error('date_fin_vie') error @enderror">
+                    <label for="date_fin_vie">Date de fin de durée de vie <span style="color:#888;font-weight:400;font-size:0.85rem;">(optionnel)</span></label>
+                    <input type="date" name="date_fin_vie" id="date_fin_vie" 
+                        value="{{ old('date_fin_vie', $equipement->date_fin_vie?->format('Y-m-d')) }}">
+                    @error('date_fin_vie')
                         <div class="ui pointing red basic label">{{ $message }}</div>
                     @enderror
                 </div>

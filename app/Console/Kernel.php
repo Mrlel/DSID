@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Vérification quotidienne des fins de vie des équipements
+        $schedule->command('equipements:check-lifetime')->dailyAt('08:00');
+        // Vérification quotidienne des fins de vie des mobiliers
+        $schedule->command('mobiliers:check-lifetime')->dailyAt('08:05');
+        $schedule->command('mobiliers:check-lifetime')->dailyAt('08:05');
     }
 
     /**

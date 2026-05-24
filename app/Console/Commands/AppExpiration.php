@@ -23,7 +23,6 @@ class AppExpiration extends Command
             return;
         }
 
-        // Valider et enregistrer la nouvelle date
         try {
             $date = Carbon::parse($this->argument('date'))->format('Y-m-d');
             Storage::disk('local')->put('system/expiration.txt', $date);

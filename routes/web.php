@@ -14,7 +14,7 @@ use App\Http\Controllers\DemandeMaterielController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\MaterielController;
 use App\Http\Controllers\Auth\ChangePasswordController;
-use App\Http\Controllers\ChatbotController;
+
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AssignerLogicielController;
 use App\Http\Controllers\userDashboardController;
@@ -30,7 +30,14 @@ use App\Http\Controllers\JournalModifController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\MesDemandesController;
 use App\Http\Controllers\FonctionController;
+use App\Http\Controllers\SortieVehiculeController;
+use App\Http\Controllers\PatrimoineEnleveController;
+use App\Http\Controllers\MobilierController;
+use App\Http\Controllers\SortieEquipementController;
+use App\Http\Controllers\FormationController;
+use App\Http\Controllers\FinVieController;
 use App\Http\Controllers\PatrimoineDiversController;
+use App\Http\Controllers\VehiculeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -133,8 +140,7 @@ Route::middleware(['auth'])->group(function () {
     // --- 4. GESTION DES ÉQUIPEMENTS (Matériel/Equipement/Poste) ---
 
     // EquipementController
-    Route::get('/equipements/create', [EquipementController::class, 'create_equipement'])->name('equipement.create');
-    Route::post('/import-equipements', [EquipementController::class, 'importEquipement'])->name('equipement.import');
+    Route::get('/equipements/create', [EquipementController::class, 'create_equipement'])->name('equipement.create');    Route::post('/import-equipements', [EquipementController::class, 'importEquipement'])->name('equipement.import');
     Route::get('/equipement/{id}', [EquipementController::class, 'show'])->name('equipement.show');
     Route::get('/ordinateur', [EquipementController::class, 'showOrdiPage']);
     Route::get('/delete_ordinateur/{id}', [EquipementController::class, 'delete_ordi']);
@@ -143,6 +149,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/update_equipemnt/traitement', [EquipementController::class, 'updateEquipement'])->name('equipement.update');
     Route::get('/filter_equipements', [EquipementController::class, 'filter'])->name('filter.equipements');
     Route::get('/equipements/{id}/download-qr', [EquipementController::class, 'downloadQrCodePdf'])->name('equipements.downloadQr');
+
+    // Sorties d'équipements (maintenance externe, réforme, transfert)
+    Route::get('/sorties-equipements', [SortieEquipementController::class, 'index'])->name('sorties-equipements.index');
+    Route::get('/sorties-equipements/{id}', [SortieEquipementController::class, 'show'])->name('sorties-equipements.show');
+    Route::get('/equipements/{equipementId}/sortie/create', [SortieEquipementController::class, 'create'])->name('sorties-equipements.create');
+    Route::post('/sorties-equipements', [SortieEquipementController::class, 'store'])->name('sorties-equipements.store');
+    Route::put('/sorties-equipements/{sortieId}/retour', [SortieEquipementController::class, 'retour'])->name('sorties-equipements.retour');
+
+    // Tableau de bord fin de vie (équipements + mobiliers + véhicules)
+    Route::get('/fin-vie', [\App\Http\Controllers\FinVieController::class, 'index'])->name('fin-vie.index');
     
     // MaterielController
     Route::get('/materiels/en-service', [MaterielController::class, 'materielsEnService'])->name('materiels.en-service');
@@ -245,10 +261,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/maintenances/{id}', [MaintenanceController::class, 'show'])->name('maintenances.show');
     Route::post('/maintenances/create-from-demande/{demandeId}', [MaintenanceController::class, 'createFromDemande'])->name('maintenances.createFromDemande');
 
-    // --- 8. NOTIFICATIONS, JOURNAL, DOCUMENTS & CHATBOT ---
-
-    // NotificationController
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    // --- 8. NOTIFICATIONS, JOURNAL, DOCUMENTS ---    // NotificationController    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']); // Dupliqué
@@ -261,11 +274,13 @@ Route::middleware(['auth'])->group(function () {
     // DocumentController
     Route::resource('/documents', DocumentController::class);
 
-    // ChatbotController
-    Route::get('/chatbot', [ChatbotController::class, 'showchat'])->name('chatbot');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    // Formation
+    Route::get('/centre-de-formation', [FormationController::class, 'index'])->name('formation.index');
+    Route::get('/formation/{slug}', [FormationController::class, 'module'])->name('formation.module');
 
-    // --- 9. PATRIMOINE DIVERS (Fournitures & Consommables) ---
-
+    // Fin de vie (tableau de bord multi-actifs)
+    Route::get('/fin-de-vie', [FinVieController::class, 'index'])->name('fin-vie.index');
     Route::get('/patrimoine-divers', [PatrimoineDiversController::class, 'index'])->name('patrimoine-divers.index');
     Route::get('/patrimoine-divers/create', [PatrimoineDiversController::class, 'create'])->name('patrimoine-divers.create');
     Route::post('/patrimoine-divers', [PatrimoineDiversController::class, 'store'])->name('patrimoine-divers.store');
@@ -279,7 +294,46 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/patrimoine-divers/{id}/reapprovisionner', [PatrimoineDiversController::class, 'reapprovisionner'])->name('patrimoine-divers.reapprovisionner');
     Route::get('/patrimoine-divers-historique', [PatrimoineDiversController::class, 'historique'])->name('patrimoine-divers.historique');
 
-    // --- 10. EXPORT & STATISTIQUES ---
+    // --- 9b. MOBILIER & MATÉRIEL DE BUREAU ---
+
+    Route::get('/mobiliers', [MobilierController::class, 'index'])->name('mobiliers.index');
+    Route::get('/mobiliers/create', [MobilierController::class, 'create'])->name('mobiliers.create');
+    Route::post('/mobiliers', [MobilierController::class, 'store'])->name('mobiliers.store');
+    Route::get('/mobiliers/inventaire', [MobilierController::class, 'inventaire'])->name('mobiliers.inventaire');
+    Route::get('/mobiliers/historique', [MobilierController::class, 'historique'])->name('mobiliers.historique');
+    Route::get('/mobiliers/export-excel', [MobilierController::class, 'exportExcel'])->name('mobiliers.export-excel');
+    Route::get('/mobiliers/export-pdf', [MobilierController::class, 'exportPdf'])->name('mobiliers.export-pdf');
+    Route::get('/mobiliers/{id}', [MobilierController::class, 'show'])->name('mobiliers.show');
+    Route::get('/mobiliers/{id}/edit', [MobilierController::class, 'edit'])->name('mobiliers.edit');
+    Route::put('/mobiliers/{id}', [MobilierController::class, 'update'])->name('mobiliers.update');
+    Route::delete('/mobiliers/{id}', [MobilierController::class, 'destroy'])->name('mobiliers.destroy');
+    Route::post('/mobiliers/{id}/affecter', [MobilierController::class, 'affecter'])->name('mobiliers.affecter');
+    Route::put('/mobilier-assignments/{assignmentId}/retirer', [MobilierController::class, 'retirer'])->name('mobiliers.retirer');
+    Route::post('/mobiliers/{id}/sortie', [MobilierController::class, 'sortie'])->name('mobiliers.sortie');
+
+    // --- 10. PARC AUTOMOBILE ---
+    Route::get('/vehicules', [VehiculeController::class, 'index'])->name('vehicules.index');
+    Route::get('/vehicules/create', [VehiculeController::class, 'create'])->name('vehicules.create');
+    Route::post('/vehicules', [VehiculeController::class, 'store'])->name('vehicules.store');
+    Route::get('/vehicules/historique', [VehiculeController::class, 'historique'])->name('vehicules.historique');
+    Route::get('/vehicules/{id}', [VehiculeController::class, 'show'])->name('vehicules.show');
+    Route::get('/vehicules/{id}/edit', [VehiculeController::class, 'edit'])->name('vehicules.edit');
+    Route::put('/vehicules/{id}', [VehiculeController::class, 'update'])->name('vehicules.update');
+    Route::delete('/vehicules/{id}', [VehiculeController::class, 'destroy'])->name('vehicules.destroy');
+    Route::post('/vehicules/{id}/affecter', [VehiculeController::class, 'affecter'])->name('vehicules.affecter');
+    Route::put('/vehicule-assignments/{assignmentId}/retirer', [VehiculeController::class, 'retirer'])->name('vehicules.retirer');
+
+    // Sorties véhicules
+    Route::get('/sorties-vehicules', [SortieVehiculeController::class, 'index'])->name('sorties-vehicules.index');
+    Route::get('/sorties-vehicules/{id}', [SortieVehiculeController::class, 'show'])->name('sorties-vehicules.show');
+    Route::get('/vehicules/{vehiculeId}/sortie/create', [SortieVehiculeController::class, 'create'])->name('sorties-vehicules.create');
+    Route::post('/sorties-vehicules', [SortieVehiculeController::class, 'store'])->name('sorties-vehicules.store');
+    Route::put('/sorties-vehicules/{sortieId}/retour', [SortieVehiculeController::class, 'retour'])->name('sorties-vehicules.retour');
+
+    // Patrimoines enlevés (page unifiée)
+    Route::get('/patrimoine-enleves', [PatrimoineEnleveController::class, 'index'])->name('patrimoine-enleves.index');
+
+    // --- 11. EXPORT & STATISTIQUES ---
 
     // ExportController
     Route::get('/export', [ExportController::class, 'exportData'])->name('export.data');

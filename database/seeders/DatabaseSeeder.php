@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             DirectionSeeder::class,
             FonctionSeeder::class,
             AdminSeeder::class,
+            VehiculeSeeder::class,
+            MobilierSeeder::class,
+            PatrimoineDiversSeeder::class,
         ]);
     }
 }

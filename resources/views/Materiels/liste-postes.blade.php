@@ -786,7 +786,6 @@
 
 <script>
 $(document).ready(function() {
-    // Gestion des boutons de suppression
     $('.delete-poste').click(function() {
         var posteId = $(this).data('id');
         var url = "{{ route('postes.destroy', ':id') }}".replace(':id', posteId);
@@ -794,7 +793,6 @@ $(document).ready(function() {
         $('#deletePosteModal').modal('show');
     });
 
-    // Gestion des boutons pour afficher/masquer les détails
     $('.toggle-details').click(function() {
         var postId = $(this).data('post-id');
         var details = $('#details-' + postId);
@@ -810,7 +808,7 @@ $(document).ready(function() {
         }
     });
 
-    // Initialisation de Select2 pour chaque modal d'affectation de poste
+
     @foreach($postes as $poste)
         $('#user_id_select2_{{ $poste->id }}').select2({
             dropdownParent: $('#modalAffecterPoste{{ $poste->id }}')

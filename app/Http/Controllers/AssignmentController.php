@@ -58,7 +58,7 @@
        public function equipement_details($id)
 {
     $documents = Documents::where('equipement_id', $id)->get();
-    $equipement = Equipement::with('assignments.user')->findOrFail($id);
+    $equipement = Equipement::with(['assignments.user', 'sorties.demandeur', 'sortieActive'])->findOrFail($id);
     $logiciels = AssignerLogiciel::where('equipement_id', $id)->get();
 
     $qrCode = QrCode::size(100)->generate(route('equipement.details', $id));

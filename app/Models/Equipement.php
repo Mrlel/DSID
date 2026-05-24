@@ -19,6 +19,8 @@ class Equipement extends Model
         'adresse_mac',
         'numero_serie', 
         'date_acquis',
+        'date_fin_vie',
+        'alerte_fin_vie_envoyee',
         'capacite',
         'ram',
         'source_acquisition', 
@@ -30,8 +32,13 @@ class Equipement extends Model
         'qr_code',
         'user_id',
         'direction_id',
-        'etat',
-        'poste_id', // Ajout de la relation avec le poste
+        'poste_id',
+    ];
+
+    protected $casts = [
+        'date_acquis'             => 'date',
+        'date_fin_vie'            => 'date',
+        'alerte_fin_vie_envoyee'  => 'boolean',
     ];
      protected static function boot()
     {
@@ -134,6 +141,16 @@ public function journal_modifs()
 public function demande_maintenance()
 {
     return $this->hasMany(DemandeMaintenance::class);
+}
+
+public function sorties()
+{
+    return $this->hasMany(SortieEquipement::class);
+}
+
+public function sortieActive()
+{
+    return $this->hasOne(SortieEquipement::class)->where('statut', 'en_cours');
 }
 
 }

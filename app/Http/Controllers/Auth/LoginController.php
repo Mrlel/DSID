@@ -30,59 +30,65 @@ class LoginController extends Controller
     }
 
     public function loginUser(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|exists:users,email',
-            'password' => 'required',
+{
+    $credentials = $request->validate([
+        'email'    => 'required|exists:users,email',
+        'password' => 'required',
+    ]);
+
+    if (!Auth::attempt($credentials)) {
+        return back()->withErrors([
+            'email' => 'Identifiants incorrects'
         ]);
+    }
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    $request->session()->regenerate();
 
-            $user = Auth::user();
+    $user = Auth::user();
 
-    
-            if ($user->role === 'superadmin') {
-                return redirect('/superadmin/dashboard')->with('success', 'Bienvenue Super Admin !');
-            }
+    // Super Admin
+    if ($user->role === 'superadmin') {
+        return redirect('/superadmin/dashboard')
+            ->with('success', 'Bienvenue Super Admin !');
+    }
 
-            if (!$user->direction) {
-                Auth::logout();
-                return back()->withErrors(['message' => 'Votre compte n’est rattaché à aucune direction.']);
-            }
+    // Vérification direction
+    if (!$user->direction) {
+        Auth::logout();
 
-            if ($user->direction->statut !== 'active') {
-                Auth::logout();
-                return back()->withErrors(['message' => 'Votre direction est désactivée.']);
-            }
+        return back()->withErrors([
+            'message' => 'Votre compte n’est rattaché à aucune direction.'
+        ]);
+    }
 
-            if (!$user->password_changed_at) {
-                return redirect()->route('password.change');
-            }
-            
-            if ($user->role === 'admin') {
-                return redirect('/adminDashboard');
-            }
-            
-            if ($user->role === 'chef_de_service') {
-                return redirect('/adminDashboard');
-            }
-            if ($user->role === 'sous_directeur') {
-                return redirect('/adminDashboard');
-            }
-            if ($user->role === 'gestionnaire_parc') {
-                return redirect('/adminDashboard');
-            }
-            if ($user->role === 'technicien') {
-                return redirect('/adminDashboard');
-            }
-            // --FIN commentaire--
+    if ($user->direction->statut !== 'active') {
+        Auth::logout();
 
+        return back()->withErrors([
+            'message' => 'Votre direction est désactivée.'
+        ]);
+    }
 
-            return redirect()->route('userDashboard')->with('success', 'Connexion réussie !');
-        }
+    if (!$user->password_changed_at) {
+        return redirect()->route('password.change');
+    }
 
-        return back()->withErrors(['email' => 'Identifiants incorrects']);
+    $adminRoles = [
+        'admin',
+        'chef_de_service',
+        'sous_directeur',
+        'gestionnaire_parc',
+        'technicien',
+    ];
+
+    if (in_array($user->role, $adminRoles)) {
+        return redirect('/adminDashboard');
+    }
+
+    // Utilisateur simple
+    return redirect()
+        ->route('userDashboard')
+        ->with('success', 'Connexion réussie !');
 }
 
 public function updatePassword(Request $request)

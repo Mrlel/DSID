@@ -3,274 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEPD-GPI | Gestion du Patrimoine Informatique</title>
-    
-    <!-- Bootstrap CSS -->
+    <title>DSID - Gestion du Patrimoine Informatique</title>
+    <link rel="shortcut icon" href="/r.jfif">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
     <style>
         :root {
             --orange-ci: #F77F00;
             --white-ci: #FFFFFF;
             --green-ci: #009A44;
         }
-    #accueil{
-            background:linear-gradient(rgba(0, 0, 0, 0.429),rgba(0, 0, 0, 0.429)), url({{ asset('css/bg.jpg') }});
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Ajustement HERO Section pour mobile */
+        #accueil {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("{{ asset('css/bg.jpg') }}");
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
+            background-attachment: scroll; /* Scroll est plus performant sur mobile que fixed */
+            min-height: 80vh;
             display: flex;
             align-items: center;
+            padding-top: 80px;
         }
-        .watermark {
+        
+        @media (min-width: 992px) {
+            #accueil { background-attachment: fixed; min-height: 90vh; }
+        }
+
+        .country-banner {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-35deg);
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            opacity: 0.1;
-            font-size: 3px;
-            color: #000;
-            z-index: 9999;
+            top: 0; left: 0; right: 0;
+            display: flex; height: 6px; z-index: 1100;
         }
         
-        .flag-stripe {
-            height: 8px;
+        .banner-orange { background-color: var(--orange-ci); flex: 1; }
+        .banner-white { background-color: var(--white-ci); flex: 1; }
+        .banner-green { background-color: var(--green-ci); flex: 1; }
+        
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .hero-title {
+            font-size: clamp(1.8rem, 5vw, 3.5rem); /* Taille fluide selon l'écran */
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
         }
         
-        .flag-orange {
-            background-color: var(--orange-ci);
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: #f0f0f0;
+            margin-bottom: 2rem;
         }
-        
-        .flag-white {
-            background-color: var(--white-ci);
-        }
-        
-        .flag-green {
-            background-color: var(--green-ci);
-        }
-        
-        .navbar-scrolled {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            background-color: white;
-        }
+
+        .feature-section { padding: 4rem 1rem; background-color: white; }
         
         .feature-card {
-            transition: all 0.3s ease;
             height: 100%;
+            transition: transform 0.3s ease;
+            border-top: 4px solid transparent !important;
+            margin-bottom: 15px;
         }
         
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .dashboard-preview {
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
+        .feature-card:hover { transform: translateY(-10px); }
+        .card-orange:hover { border-top-color: var(--orange-ci) !important; }
+        .card-green:hover { border-top-color: var(--green-ci) !important; }
         
         .stat-value {
-            font-size: 2.5rem;
+            font-size: clamp(1.5rem, 4vw, 2.8rem);
             font-weight: bold;
-            background: linear-gradient(to right, var(--orange-ci), var(--green-ci));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--orange-ci);
         }
-        
-        .nav-menu {
-            display: none;
-        }
-        
-        .nav-menu.active {
-            display: block;
-        }
-        
-        .btn-orange {
-            background-color: var(--orange-ci);
-            border-color: var(--orange-ci);
-            color: white;
-        }
-        
-        .btn-orange:hover {
-            background-color: #e67300;
-            border-color: #e67300;
-            color: white;
-        }
-        
-        .bg-orange-50 {
-            background-color: rgba(247, 127, 0, 0.05);
-        }
-        
-        .bg-green-50 {
-            background-color: rgba(0, 154, 68, 0.05);
-        }
-        
-        .border-orange-500 {
-            border-color: var(--orange-ci) !important;
-        }
-        
-        .border-green-500 {
-            border-color: var(--green-ci) !important;
-        }
-        
-        .text-orange-500 {
-            color: var(--orange-ci) !important;
-        }
-        
-        .text-green-500 {
-            color: var(--green-ci) !important;
-        }
-        
-        .hover-orange:hover {
-            color: var(--orange-ci) !important;
-        }
-        
-        @media (max-width: 768px) {
-            .desktop-menu {
-                display: none;
-            }
-            
-            .nav-menu {
-                position: absolute;
-                top: 80px;
-                left: 0;
-                right: 0;
-                background: white;
-                z-index: 1000;
-                padding: 1rem;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            }
-        }
-        
-        .header-content {
-            position: relative;
-            z-index: 2;
+
+        .section-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
             text-align: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .main-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #2D3748;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-        }
-        
-        .main-title.text-white {
-            color: white;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.5rem;
-            color: #4A5568;
             margin-bottom: 3rem;
-            line-height: 1.6;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .subtitle.text-white {
-            color: white;
-        }
-        
-        .cta-button {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--orange-ci);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 1.25rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            box-shadow: 0 4px 15px rgba(247, 127, 0, 0.3);
             position: relative;
-            overflow: hidden;
         }
-        
-        .cta-button::before {
+
+        .section-title:after {
             content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
+            position: absolute; bottom: -10px; left: 50%;
+            transform: translateX(-50%);
+            width: 60px; height: 4px;
+            background: linear-gradient(to right, var(--orange-ci), var(--green-ci));
         }
-        
-        .cta-button:hover {
-            background-color: #E67300;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(247, 127, 0, 0.4);
-            color: white;
-            text-decoration: none;
+
+        .dashboard-preview {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            max-width: 100%;
+            height: auto;
         }
-        
-        .cta-button:hover::before {
-            left: 100%;
+
+        .dashb {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 12px;
         }
+
+        footer { background-color: #1a1a1a; color: white; }
+        .hover-orange:hover { color: var(--orange-ci) !important; }
         
-        .cta-button .icon {
-            margin-right: 12px;
-            font-size: 1.4rem;
-            transition: transform 0.3s ease;
+        /* Correction Mobile pour Semantic UI */
+        .ui.stackable.grid {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
         }
-        
-        .cta-button:hover .icon {
-            transform: translateX(3px);
+
+        .watermark {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-35deg);
+            width: 100%; pointer-events: none;
+            opacity: 0.05; font-size: 4vw;
+            color: #000; z-index: 9999; text-align: center;
         }
     </style>
 </head>
-<body class="font-sans">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top bg-white" id="navbar">
+<body>
+    <div class="watermark">Lela gnawa dominique</div>
+    
+    <div class="country-banner">
+        <div class="banner-orange"></div>
+        <div class="banner-white"></div>
+        <div class="banner-green"></div>
+    </div>
+    
+    <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="{{ asset('MEPD.jpg') }}" alt="Logo" height="48">
+                <img src="{{ asset('MEPD.jpg') }}" alt="Logo" height="40">
             </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark hover-orange" href="#accueil">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark hover-orange" href="#fonctionnalites">Fonctionnalités</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark hover-orange" href="#apercu">Aperçu</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark hover-orange" href="#contact">Contact</a>
-                    </li>
-                    <li class="nav-item ms-lg-3">
-                        <a href="/login" class="btn btn-orange">
+                <ul class="navbar-nav ms-auto text-center">
+                    <li class="nav-item"><a class="nav-link text-dark hover-orange" href="#accueil">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark hover-orange" href="#fonctionnalites">Fonctionnalités</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark hover-orange" href="#apercu">Aperçu</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark hover-orange" href="#contact">Contact</a></li>
+                    <li class="nav-item mt-2 mt-lg-0 ms-lg-3">
+                        <a href="/login" class="btn text-white w-100" style="background-color: var(--orange-ci)">
                             <i class="bi bi-box-arrow-in-right me-2"></i> Connexion
                         </a>
                     </li>
@@ -278,312 +167,156 @@
             </div>
         </div>
     </nav>
-
-      <!-- Hero Section -->
-    <section class="header-section bg-gradient-to-r from-orange-50 to-green-50 py-20 md:py-32" id="accueil" data-aos="fade-up">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="main-title text-white mb-4">Gestion du Patrimoine Informatique</h1>
-            <p class="subtitle text-white">Simplifiez la gestion de vos équipements avec la solution DSID</p>
-            <a href="/login" class="cta-button ">
-                <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
-            </a>
+    
+    <section id="accueil">
+        <div class="container text-center">
+            <div class="hero-content mx-auto">
+                <h1 class="hero-title">Gestion du Patrimoine Informatique</h1>
+                <p class="hero-subtitle">Simplifiez la gestion de vos équipements avec la solution DSID</p>
+                <a href="/login" class="btn btn-lg text-white px-5 py-3" style="background-color: var(--orange-ci);">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Se connecter
+                </a>
+            </div>
         </div>
     </section>
     
-
-    <!-- Features Section -->
-    <section class="py-5 bg-white" id="fonctionnalites" data-aos="fade-up">
+    <section class="feature-section" id="fonctionnalites">
         <div class="container">
-            <h2 class="text-center fw-bold text-dark mb-5">Fonctionnalités clés</h2>
-            
+            <h2 class="section-title">Fonctionnalités clés</h2>
             <div class="row g-4">
-                <!-- Feature 1 -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 rounded shadow-sm border-start border-4 border-orange-500 h-100">
-                        <div class="text-orange-500 mb-3">
-                            <i class="bi bi-display fs-1"></i>
+                    <div class="ui card feature-card card-orange w-100">
+                        <div class="content text-center p-4">
+                            <i class="desktop icon fs-1 icon-orange mb-3"></i>
+                            <div class="header h4 mb-3">Inventaire Complet</div>
+                            <p class="description">Suivi détaillé et centralisé de tout le parc informatique et télécom.</p>
                         </div>
-                        <h3 class="h4 fw-semibold mb-3">Inventaire Complet</h3>
-                        <p class="text-muted">Suivre tous les équipements informatique et télécommunication avec un inventaire détaillé et centralisé. Accéder instantanément aux informations essentielles.</p>
                     </div>
                 </div>
-                
-                <!-- Feature 2 -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 rounded shadow-sm border-start border-4 border-green-500 h-100">
-                        <div class="text-green-500 mb-3">
-                            <i class="bi bi-bar-chart fs-1"></i>
+                    <div class="ui card feature-card card-green w-100">
+                        <div class="content text-center p-4">
+                            <i class="chart bar icon fs-1 icon-green mb-3"></i>
+                            <div class="header h4 mb-3">Tableaux de Bord</div>
+                            <p class="description">Visualisation interactive de l'état global du parc en temps réel.</p>
                         </div>
-                        <h3 class="h4 fw-semibold mb-3">Tableaux de Bord</h3>
-                        <p class="text-muted">Visualiser l'état de votre parc informatique et télécommunication grâce à des tableaux de bord interactifs et des rapports personnalisables.</p>
                     </div>
                 </div>
-                
-                <!-- Feature 3 -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 rounded shadow-sm border-start border-4 border-orange-500 h-100">
-                        <div class="text-orange-500 mb-3">
-                            <i class="bi bi-clock fs-1"></i>
+                    <div class="ui card feature-card card-orange w-100">
+                        <div class="content text-center p-4">
+                            <i class="history icon fs-1 icon-orange mb-3"></i>
+                            <div class="header h4 mb-3">Suivi Maintenance</div>
+                            <p class="description">Optimisation de la durée de vie via le suivi préventif et curatif.</p>
                         </div>
-                        <h3 class="h4 fw-semibold mb-3">Suivi des Maintenances</h3>
-                        <p class="text-muted">Avoir l'état complet de la maintenance préventive et curative pour optimiser la durée de vie des équipements.</p>
-                    </div>
-                </div>
-                
-                <!-- Feature 4 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 rounded shadow-sm border-start border-4 border-green-500 h-100">
-                        <div class="text-green-500 mb-3">
-                            <i class="bi bi-people fs-1"></i>
-                        </div>
-                        <h3 class="h4 fw-semibold mb-3">Gestion des Utilisateurs</h3>
-                        <p class="text-muted">Assurer la répartition équitable des équipements aux utilisateurs et fournir l'historique pour une meilleure vue de la responsabilité de l'utilisateur.</p>
-                    </div>
-                </div>
-                
-                <!-- Feature 5 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 rounded shadow-sm border-start border-4 border-orange-500 h-100">
-                        <div class="text-orange-500 mb-3">
-                            <i class="bi bi-bell fs-1"></i>
-                        </div>
-                        <h3 class="h4 fw-semibold mb-3">Alertes & Notifications</h3>
-                        <p class="text-muted">Assurer les rappels des maintenances planifiés pour les fins de garantie et les problèmes détectés.</p>
-                    </div>
-                </div>
-                
-                <!-- Feature 6 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 rounded shadow-sm border-start border-4 border-green-500 h-100">
-                        <div class="text-green-500 mb-3">
-                            <i class="bi bi-file-text fs-1"></i>
-                        </div>
-                        <h3 class="h4 fw-semibold mb-3">Rapports Personnalisés</h3>
-                        <p class="text-muted">Générer des rapports détaillés sur l'état de votre parc informatique et télécommunication pour faciliter la prise de décision stratégique.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Stats Section -->
-    <section class="py-5 bg-light" data-aos="fade-up">
-        <div class="container">
-            <div class="row g-4 text-center">
-                <div class="col-6 col-md-3">
-                    <div class="stat-value">{{ $equipement->count() }}+</div>
-                    <div class="text-muted fw-medium">Équipements Gérés</div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-value">98%</div>
-                    <div class="text-muted fw-medium">Taux de Disponibilité</div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-value">{{ $user->count() }}+</div>
-                    <div class="text-muted fw-medium">Utilisateurs Actifs</div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="stat-value">35%</div>
-                    <div class="text-muted fw-medium">Réduction des Coûts</div>
-                </div>
+    
+    <div class="container py-5 bg-white shadow-sm rounded-4 my-5">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="stat-value">{{ $equipement->count() }}+</div>
+                <div class="text-muted small fw-bold">ÉQUIPEMENTS</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-value">98%</div>
+                <div class="text-muted small fw-bold">DISPONIBILITÉ</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-value">{{ $user->count() }}+</div>
+                <div class="text-muted small fw-bold">UTILISATEURS</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-value">35%</div>
+                <div class="text-muted small fw-bold">ÉCONOMIE</div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <div class="watermark">Lela gnawa dominique</div>
-
-    <!-- Overview Section -->
-    <section class="py-5 bg-white" id="apercu" data-aos="fade-up">
+    <section class="overview-section py-5" id="apercu">
         <div class="container">
-            <h2 class="text-center fw-bold text-dark mb-5">Aperçu de l'Application</h2>
-            
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h3 class="h2 fw-semibold mb-4 text-dark">Interface intuitive et fonctionnelle</h3>
-                    <p class="text-muted mb-4">Notre solution de gestion du patrimoine informatique offre une interface moderne et intuitive qui permet de:</p>
-                    
-                    <ul class="list-unstyled">
-                        <li class="mb-3 d-flex align-items-start">
-                            <i class="bi bi-check-circle-fill text-green-500 me-2 mt-1"></i>
-                            <span class="text-dark">Suivre en temps réel l'état des équipements</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-start">
-                            <i class="bi bi-check-circle-fill text-green-500 me-2 mt-1"></i>
-                            <span class="text-dark">Gérer les attributions aux utilisateurs</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-start">
-                            <i class="bi bi-check-circle-fill text-green-500 me-2 mt-1"></i>
-                            <span class="text-dark">Planifier les maintenances préventives</span>
-                        </li>
-                        <li class="mb-3 d-flex align-items-start">
-                            <i class="bi bi-check-circle-fill text-green-500 me-2 mt-1"></i>
-                            <span class="text-dark">Centraliser la documentation technique</span>
-                        </li>
-                    </ul>
-                </div>
-                
+            <h2 class="section-title">Aperçu de l'Application</h2>
+            <div class="row align-items-center g-5">
                 <div class="col-lg-6">
-                    <img src="/app.png" alt="Aperçu du tableau de bord" class="dashboard-preview w-100">
+                    <h3 class="display-6 fw-bold mb-4">Interface intuitive</h3>
+                    <p class="lead text-muted">Une solution moderne pensée pour l'efficacité administrative :</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> État des équipements en temps réel</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Gestion simplifiée des attributions</li>
+                        <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Planning de maintenance automatique</li>
+                    </ul>
+                </div>
+                <div class="col-lg-6">
+                    <div class="dashb shadow-lg">
+                        <img src="/dashboard.jpeg" alt="Dashboard" class="dashboard-preview">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-5" id="contact">
+    <footer class="py-5" id="contact">
         <div class="container">
-            <div class="row g-4">
-                <!-- About -->
-                <div class="col-md-6 col-lg-3">
-                    <h3 class="h5 fw-semibold mb-3">À propos</h3>
-                    <p class="text-light mb-3">La Direction des Systèmes d'Information et de la Digitalisation (DSID) du Ministère du Plan et du Developpement(MEPD) est responsable de la stratégie numérique et de la gestion des infrastructures informatiques.</p>
-                    <div class="d-flex align-items-center">
-                        <span class="d-inline-block rounded-circle bg-orange-500 me-1" style="width: 12px; height: 12px;"></span>
-                        <span class="d-inline-block rounded-circle bg-white me-1" style="width: 12px; height: 12px;"></span>
-                        <span class="d-inline-block rounded-circle bg-green-500 me-2" style="width: 12px; height: 12px;"></span>
-                        <span>Côte d'Ivoire</span>
+            <div class="row g-5">
+                <div class="col-md-6 col-lg-4">
+                    <h5 class="text-orange-ci mb-4" style="color:var(--orange-ci)">À propos</h5>
+                    <p class="text-secondary">La DSID du Ministère du Plan et du Développement (MEPD) assure la stratégie numérique et la gestion des infrastructures.</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark p-2">République de Côte d'Ivoire</span>
                     </div>
                 </div>
-                
-                <!-- Quick Links -->
-                <div class="col-md-6 col-lg-3">
-                    <h3 class="h5 fw-semibold mb-3">Liens rapides</h3>
+                <div class="col-md-6 col-lg-2">
+                    <h5 class="text-white mb-4">Liens</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#accueil" class="text-light text-decoration-none hover-orange">Accueil</a></li>
-                        <li class="mb-2"><a href="#fonctionnalites" class="text-light text-decoration-none hover-orange">Fonctionnalités</a></li>
-                        <li class="mb-2"><a href="#apercu" class="text-light text-decoration-none hover-orange">Aperçu</a></li>
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none hover-orange">FAQ</a></li>
+                        <li><a href="#accueil" class="text-secondary text-decoration-none hover-orange">Accueil</a></li>
+                        <li><a href="#fonctionnalites" class="text-secondary text-decoration-none hover-orange">Fonctionnalités</a></li>
+                        <li><a href="#contact" class="text-secondary text-decoration-none hover-orange">Contact</a></li>
                     </ul>
                 </div>
-                
-                <!-- Contact -->
                 <div class="col-md-6 col-lg-3">
-                    <h3 class="h5 fw-semibold mb-3">Contact</h3>
-                    <div class="text-light">
-                        <div class="d-flex align-items-start mb-2">
-                            <i class="bi bi-geo-alt me-2 mt-1"></i>
-                            <span>Immeuble SCIAM</span>
-                        </div>
-                        <div class="d-flex align-items-start mb-2">
-                            <i class="bi bi-telephone me-2 mt-1"></i>
-                            <span>(+225) 27 20 20 08 42</span>
-                        </div>
-                        <div class="d-flex align-items-start mb-3">
-                            <i class="bi bi-envelope me-2 mt-1"></i>
-                            <span>info.dsid@plan.gouv.ci</span>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <a href="https://www.facebook.com/profile.php?id=100065489319554" class="text-light hover-orange text-decoration-none">
-                            <i class="bi bi-facebook fs-5"></i>
-                        </a>
-                        <a href="#" class="text-light hover-orange text-decoration-none">
-                            <i class="bi bi-twitter fs-5"></i>
-                        </a>
-                        <a href="#" class="text-light hover-orange text-decoration-none">
-                            <i class="bi bi-linkedin fs-5"></i>
-                        </a>
-                    </div>
+                    <h5 class="text-white mb-4">Contact</h5>
+                    <p class="text-secondary mb-1"><i class="bi bi-geo-alt me-2"></i> Immeuble SCIAM, Abidjan</p>
+                    <p class="text-secondary mb-1"><i class="bi bi-telephone me-2"></i> (+225) 27 20 20 08 42</p>
+                    <p class="text-secondary"><i class="bi bi-envelope me-2"></i> info.dsid@plan.gouv.ci</p>
                 </div>
-                
-                <!-- Newsletter -->
                 <div class="col-md-6 col-lg-3">
-                    <h3 class="h5 fw-semibold mb-3">Newsletter</h3>
-                    <p class="text-light mb-3">Abonnez-vous pour recevoir nos dernières actualités</p>
-                    <div class="input-group">
-                        <input type="email" class="form-control" placeholder="Votre email...">
-                        <button class="btn btn-orange">
-                            <i class="bi bi-send"></i>
-                        </button>
+                    <h5 class="text-white mb-4">Suivez-nous</h5>
+                    <div class="d-flex gap-3 fs-4">
+                        <a href="#" class="text-secondary hover-orange"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-secondary hover-orange"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-secondary hover-orange"><i class="bi bi-twitter-x"></i></a>
                     </div>
                 </div>
             </div>
-            
-            <div class="border-top border-secondary mt-4 pt-4 text-center text-light">
-                2025 MPD - Ministère du Plan et du Développement
+            <div class="text-center mt-5 pt-4 border-top border-secondary text-secondary small">
+                &copy; 2025 MEPD - Ministère du Plan et du Développement | Tous droits réservés.
             </div>
         </div>
     </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            once: true
-        });
-
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 50) {
+                $('.navbar').addClass('py-2 shadow');
             } else {
-                navbar.classList.remove('navbar-scrolled');
+                $('.navbar').removeClass('py-2 shadow');
             }
         });
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    const navbarToggler = document.querySelector('.navbar-toggler');
-                    const navbarCollapse = document.querySelector('.navbar-collapse');
-                    if (navbarCollapse.classList.contains('show')) {
-                        navbarToggler.click();
-                    }
-                }
-            });
+        // Smooth scroll
+        $('a[href*="#"]').on('click', function(e) {
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: $($(this).attr('href')).offset().top - 80
+            }, 600);
+            // Ferme le menu mobile après clic
+            $('.navbar-collapse').collapse('hide');
         });
-
-        // Number animation for stats
-        function animateValue(id, start, end, duration) {
-            const obj = document.getElementById(id);
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerHTML = Math.floor(progress * (end - start) + start);
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        // Trigger animation when stats section is in view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const statValues = document.querySelectorAll('.stat-value');
-                    statValues.forEach((value, index) => {
-                        const target = parseInt(value.textContent.replace('+', ''));
-                        animateValue(`stat-${index}`, 0, target, 2000);
-                    });
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        const statsSection = document.querySelector('.stats-section');
-        if (statsSection) {
-            observer.observe(statsSection);
-        }
     </script>
 </body>
 </html>

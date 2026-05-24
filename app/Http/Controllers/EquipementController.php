@@ -84,6 +84,7 @@ class EquipementController extends Controller
                 'adresse_mac' => 'nullable|string|max:255',
                 'numero_serie' => 'required|string|unique:equipements,numero_serie',
                 'date_acquis' => 'required|date',
+                'date_fin_vie' => 'nullable|date',
                 'capacite' => 'nullable|integer',
                 'ram' => 'nullable|integer',
                 'source_acquisition' => 'nullable|string|in:Etat,Bailleur,autre',
@@ -91,7 +92,7 @@ class EquipementController extends Controller
                 'processeur' => 'nullable|string|max:255',
                 'systeme' => 'nullable|string|max:255',
                 'etat' => 'required|in:bon,moyen,hors service',
-                'statut' => 'nullable|in:en stock,en service,en maintenance', 
+                'statut' => 'nullable|in:en stock,en service,en maintenance,enlèvement', 
             ]);
     
             if ($validator->fails()) {
@@ -109,6 +110,7 @@ class EquipementController extends Controller
                 'adresse_mac' => $request->adresse_mac,
                 'numero_serie' => $request->numero_serie,
                 'date_acquis' => $request->date_acquis,
+                'date_fin_vie' => $request->date_fin_vie,
                 'capacite' => $request->capacite,
                 'ram' => $request->ram,
                 'source_acquisition' => $request->source_acquisition,
@@ -200,6 +202,7 @@ public function delete_ordi($id)
                 Rule::unique('equipements', 'numero_serie')->ignore($request->id),
             ],
             'date_acquis' => 'required|date',
+            'date_fin_vie' => 'nullable|date',
             'capacite' => 'nullable|integer',
             'ram' => 'nullable|integer',
             'source_acquisition' => 'required|in:Etat,Bailleur,autre',
@@ -228,6 +231,7 @@ public function delete_ordi($id)
             'adresse_mac' => $request->adresse_mac,
             'numero_serie' => $request->numero_serie,
             'date_acquis' => $request->date_acquis,
+            'date_fin_vie' => $request->date_fin_vie,
             'capacite' => $request->capacite,
             'ram' => $request->ram,
             'nom_fn' => $request->nom_fn,

@@ -122,7 +122,7 @@ public function showUserlist()
             'grade' => 'required|string',
             'date_prise_service_un' => 'nullable|string',
             'date_prise_service' => 'nullable|string',
-            'role' => 'required|in:user,chef_de_service,admin,sous_directeur,gestionnaire_parc,technicien',
+            'role' => 'required|in:user,chef_de_service,admin,sous_directeur,gestionnaire_parc,technicien,directeur,ministre,point_focal,service_gestionnaire',
         ]);
     
         if ($validator->fails()) {

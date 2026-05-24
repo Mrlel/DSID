@@ -454,7 +454,45 @@
                         </div>
                        
                     </div>
-                  
+
+                    {{-- Alerte fin de vie --}}
+                    @if($equipement->date_fin_vie)
+                        @php
+                            $joursRestants = now()->diffInDays($equipement->date_fin_vie, false);
+                            $finVieClass = $joursRestants < 0 ? 'danger' : ($joursRestants <= 30 ? 'warning' : 'success');
+                            $finVieIcon  = $joursRestants < 0 ? 'bi-x-circle-fill' : ($joursRestants <= 30 ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill');
+                        @endphp
+                        <div class="alert alert-{{ $finVieClass }} py-2 px-3 d-inline-flex align-items-center gap-2 mt-2 mb-0" style="font-size:0.875rem;">
+                            <i class="bi {{ $finVieIcon }}"></i>
+                            @if($joursRestants < 0)
+                                Fin de durée de vie dépassée depuis {{ abs($joursRestants) }} jour(s) ({{ $equipement->date_fin_vie->format('d/m/Y') }})
+                            @elseif($joursRestants <= 30)
+                                Fin de durée de vie dans {{ $joursRestants }} jour(s) — {{ $equipement->date_fin_vie->format('d/m/Y') }}
+                            @else
+                                Fin de durée de vie : {{ $equipement->date_fin_vie->format('d/m/Y') }} ({{ $joursRestants }} jours)
+                            @endif
+                        </div>
+                    @endif
+
+                    {{-- Sortie active --}}
+                    @if($equipement->sortieActive)
+                        <div class="alert alert-danger py-2 px-3 d-inline-flex align-items-center gap-2 mt-2 mb-0" style="font-size:0.875rem;">
+                            <i class="bi bi-box-arrow-right"></i>
+                            Sortie en cours : <strong>{{ $equipement->sortieActive->type_label }}</strong>
+                            depuis le {{ $equipement->sortieActive->date_sortie->format('d/m/Y') }}
+                            <a href="{{ route('sorties-equipements.show', $equipement->sortieActive->id) }}" class="ms-2 text-white">Voir</a>
+                        </div>
+                    @endif
+
+                    {{-- Bouton sortie --}}
+                    @if(!$equipement->sortieActive)
+                    <div class="mt-3">
+                        <a href="{{ route('sorties-equipements.create', $equipement->id) }}"
+                           class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-box-arrow-right me-1"></i> Enregistrer une sortie
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
             
@@ -463,6 +501,7 @@
                     <button class="tab-link active" onclick="openTab(event, 'fonctionnalites')"><i class="fas fa-cog me-2"></i>Spécifications techniques</button>
                     <button class="tab-link" onclick="openTab(event, 'specifications')"><i class="fas fa-history me-2"></i>Historique d'assignation</button>
                     <button class="tab-link" onclick="openTab(event, 'modifications')"><i class="fas fa-cube me-2"></i>Logiciel installé</button>
+                    <button class="tab-link" onclick="openTab(event, 'sorties')"><i class="bi bi-box-arrow-right me-2"></i>Sorties</button>
                     <!--</BR><button class="tab-link" onclick="openTab(event, 'documents')"><i class="fas fa-file me-2"></i>Documents</button> -->
                 </div>
             </div>
@@ -674,6 +713,68 @@
     </div>
 </div>
                 </div>
+                <div id="sorties" class="tab-pane">
+                    <div class="card shadow-sm mb-4 border-0">
+                        <div class="card-header bg-dark text-white py-3 d-flex align-items-center justify-content-between">
+                            <h5 class="mb-0"><i class="bi bi-box-arrow-right me-2"></i>Historique des sorties</h5>
+                            @if(!$equipement->sortieActive)
+                            <a href="{{ route('sorties-equipements.create', $equipement->id) }}"
+                               class="btn btn-sm btn-danger">
+                                <i class="bi bi-plus-circle me-1"></i> Nouvelle sortie
+                            </a>
+                            @endif
+                        </div>
+                        <div class="card-body p-0">
+                            @if($equipement->sorties && $equipement->sorties->isNotEmpty())
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-secondary">
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Motif</th>
+                                            <th>Prestataire</th>
+                                            <th>Date sortie</th>
+                                            <th>Retour prévu</th>
+                                            <th>Retour effectif</th>
+                                            <th>Statut</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($equipement->sorties->sortByDesc('date_sortie') as $s)
+                                        @php
+                                            $sc = match($s->statut) { 'retourne' => 'bg-success', 'definitif' => 'bg-secondary', default => 'bg-warning text-dark' };
+                                            $tc = match($s->type_sortie) { 'maintenance_externe' => 'bg-info text-dark', 'reforme' => 'bg-danger', default => 'bg-primary' };
+                                        @endphp
+                                        <tr>
+                                            <td><span class="badge {{ $tc }}">{{ $s->type_label }}</span></td>
+                                            <td class="text-truncate" style="max-width:160px;" title="{{ $s->motif }}">{{ $s->motif }}</td>
+                                            <td>{{ $s->prestataire ?? '—' }}</td>
+                                            <td>{{ $s->date_sortie->format('d/m/Y') }}</td>
+                                            <td>{{ $s->date_retour_prevue?->format('d/m/Y') ?? '—' }}</td>
+                                            <td>{{ $s->date_retour_effective?->format('d/m/Y') ?? '—' }}</td>
+                                            <td><span class="badge {{ $sc }}">{{ $s->statut_label }}</span></td>
+                                            <td>
+                                                <a href="{{ route('sorties-equipements.show', $s->id) }}"
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            @else
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-box-arrow-right fs-2 mb-2 d-block"></i>
+                                Aucune sortie enregistrée pour cet équipement.
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
                 <div id="documents" class="tab-pane">
                     <button class="btn bg-success" data-bs-toggle="modal" data-bs-target="#addDocumentModal" data-equipement-id="{{$equipement->id}}">Ajouter</button>
                     @if($documents && $documents->isNotEmpty())

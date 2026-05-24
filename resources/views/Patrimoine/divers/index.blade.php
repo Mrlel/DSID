@@ -80,7 +80,7 @@
             </div>
             <div class="col-md-2 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100">Filtrer</button>
-                <a href="{{ route('patrimoine-divers.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
+                <a href="{{ route('patrimoine-divers.index') }}" class="btn btn-outline-secondary w-100">Réinitialiser</a>
             </div>
         </div>
     </div>
